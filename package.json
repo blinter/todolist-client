@@ -4,11 +4,15 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.11.3",
+    "@naisutech/react-tree": "^0.4.2",
     "bootstrap": "^4.6.0",
+    "draggable-react-tree-component": "^1.0.17",
+    "eventemitter3": "^4.0.7",
     "jquery": "^3.5.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.2",
+    "react-sortable-tree": "^2.8.0",
     "underscore": "^1.12.0"
   },
   "scripts": {
@@ -34,5 +38,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "react-redux": "^7.2.2",
+    "redux": "^4.0.5"
   }
 }

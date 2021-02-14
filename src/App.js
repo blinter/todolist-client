@@ -1,111 +1,141 @@
-import { Button } from '@material-ui/core';
 import 'bootstrap/dist/css/bootstrap.css';
 import { useEffect, useState } from 'react';
-import _ from 'underscore'
+import _ from 'underscore';
 import './App.css';
-import ListItemComponent from './ListItemComponent';
+import ListItemComponent from './ListItemComponent'
+import Emitter from './Emitter';
+import KeyUtils from './keyUtils'
 
 function App() {
 
-  const [rootItem, setRootItem] = useState({ itens: [] })
+
+  const [rootItem, setRootItem] = useState({
+    root: true,
+    key: KeyUtils.generateKey('item'),
+    description: `Lista Exemplo`,
+    itens: [{
+      description: 'Item description', details: 'Item detais', key: KeyUtils.generateKey('item'),
+      itens: [
+        {
+          description: 'Nested Item description', details: 'Nested Item detais', key: KeyUtils.generateKey('item'),
+
+        }
+      ]
+    }]
+  })
 
   useEffect(() => {
-    setRootItem({
-      key: generateItemKey(),
-      description: `Lista Exemplo`,
-      itens: [{
-        description: 'Item description', details: 'Item detais', key: generateItemKey(),
-        itens: [
-          {
-            description: 'Nested Item description', details: 'Nested Item detais', key: generateItemKey(),
-
-          }
-        ]
-      }]
-    })
+    Emitter.on('REMOVE_ITEM', removeItem)
+    // Emitter.on('ADD_ITEM', addItem)
+    Emitter.on('ADD_NEW_ITEM', addNewitem)
+    console.log('mounted')
+    return null
   }, [])
 
-  const generateItemKey = () => {
-    return `item-${new Date().getTime()}`
+  const removeItem = (item) => {
+    console.log('removeItem')
+    findAndRemove(rootItem, item)
   }
 
-  const onItemChange = (item) => {
-    console.log(item)
-
-    item.itens = item.itens || []
-
-    item.itens.push({ description: 'Item description', details: 'Item detais', key: generateItemKey() })
+  const addNewitem = (evt) => {
+    console.log('addNewitem')
 
     let newRootItem = _.clone(rootItem)
+
+    let parent = find_item(newRootItem, evt.parent.key)
+
+    parent.itens = parent.itens || []
+    parent.itens.push(evt.newItem)
+
     setRootItem(newRootItem)
 
-    let all_itens = []
-    converter_arvore_para_lista(rootItem, all_itens)
-
-    console.log(all_itens)
   }
 
-  const converter_arvore_para_lista = function (item, acc = []) {
-    acc.push(item)
+  // const addItem = (args) => {
+  //   console.log('addItem')
 
-    if (item.itens)
-      for (const r of item.itens)
-        converter_arvore_para_lista(r, acc);
+  //   let newRootItem = _.clone(rootItem)
+
+  //   let parent = find_item(newRootItem, args.item.key)
+
+  //   let newSubItem = args.newItem || { description: 'Item description', details: 'Item detais' }
+  //   newSubItem.key = KeyUtils.generateKey('item')
+
+  //   parent.itens = parent.itens || []
+  //   parent.itens.push(newSubItem)
+
+  //   setRootItem(newRootItem)
+  // }
+
+
+  const find_item = (tree, key) => {
+    if (tree.key === key) return tree
+
+    for (const i of tree.itens) {
+      if (key === i.key) {
+        return i
+      }
+      if (key != i.key && (i.itens && i.itens.length > 0)) {
+        return find_item(i, key)
+      }
+
+    }
+
+    return null
+  }
+
+  const findAndRemove = (tree, toFind) => {
+
+    for (const i of tree.itens) {
+      if (toFind.key === i.key) {
+        tree.itens = tree.itens.filter(j => j.key != toFind.key)
+
+        let newRootItem = _.clone(rootItem)
+        setRootItem(newRootItem)
+        break
+      }
+      if (toFind.key != i.key && (i.itens && i.itens.length > 0)) {
+        findAndRemove(i, toFind)
+      }
+
+    }
   }
 
   return (
-    <div className="App">
+    <div className="mb-5">
       <header>
         <h1>TODOList APP</h1>
-        {/* <Button color="primary" variant='contained'
-          onClick={() => {
-            
-          }}
-        >Criar lista</Button> */}
       </header>
       <div >
-        <div key={rootItem.key} className='card border p-3 mt-2 rounded'>
+        <div key={rootItem.key} className='p-3 mt-2'>
           <h4>{rootItem.description}</h4>
-          <ul className='list-group'>
-            {rootItem.itens?.map((item) => {
-              return (<li key={item.key} className='list-group-item'>
-                {/* <h5>{item.description}</h5>
-                <p>{item.details}</p>
-                <button onClick={() => {
-                  onItemChange(item)
-                }}>+</button> */}
+          <div className='bg-white rounded border border-white p-2'>
 
-                <ListItemComponent item={item} onItemChange={(item) => {
-                  console.log(item)
+            <ListItemComponent number={1} parent={rootItem} item={rootItem}
+              onDescriptionChange={(item) => { }}
+            // onRemoveItem={(item) => {
+            //   findItem(rootItem, item);
+            // }}
+            // onAddItem={(parentItem, newItem) => {
 
-                  item.itens = item.itens || []
+            //   console.log(`Item que disparou o evento ->`)
+            //   console.log(parentItem)
+            //   console.log(newItem)
 
-                  item.itens.push({ description: 'Item description', details: 'Item detais', key: generateItemKey() })
+            //   parentItem.itens = parentItem.itens || []
 
-                  let newRootItem = _.clone(rootItem)
-                  setRootItem(newRootItem)
+            //   console.log(`Item novo ->`)
+            //   let newSubItem = newItem || { description: 'Item description', details: 'Item detais' }
+            //   newSubItem.key = generateItemKey()
+            //   console.log(newSubItem)
+            //   parentItem.itens.push(newSubItem)
 
-                  let all_itens = []
-                  converter_arvore_para_lista(rootItem, all_itens)
+            //   let newRootItem = _.clone(rootItem)
+            //   setRootItem(newRootItem)
 
-                  console.log(all_itens)
-                }} />
-                {/* <Button variant='outlined' size='small' onClick={() => {
-                  let newRootItem = _.clone(rootItem)
-
-                  //If does not have a itens array, set a new one.
-                  newRootItem.itens = newRootItem.itens ? newRootItem.itens : []
-
-                  newRootItem.itens.push({
-                    description: 'descricao do item',
-                    details: 'Detalhes do item',
-                    key: `list-item-${new Date().getTime()}`
-                  })
-                  setRootItem(newRootItem)
-                }}>+</Button> */}
-              </li>)
-            })}
-          </ul>
+            // }}
+            />
+          </div>
         </div>
       </div>
     </div>
