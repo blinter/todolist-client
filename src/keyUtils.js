@@ -1,6 +1,7 @@
+import { v4 as uuidv4 } from 'uuid';
 const KeyUtils = {
     generateKey: (sufix) => {
-        return `${sufix||'item'}-${Math.round(Math.random() * 200000)}`
+        return uuidv4()
     }
 }
 

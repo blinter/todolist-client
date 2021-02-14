@@ -4,16 +4,17 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.11.3",
-    "@naisutech/react-tree": "^0.4.2",
+    "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
-    "draggable-react-tree-component": "^1.0.17",
     "eventemitter3": "^4.0.7",
     "jquery": "^3.5.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-router": "^5.2.0",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.2",
-    "react-sortable-tree": "^2.8.0",
-    "underscore": "^1.12.0"
+    "underscore": "^1.12.0",
+    "uuid": "^8.3.2"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -8,7 +8,5 @@ const Emitter = {
   off: (event, fn) => eventEmitter.off(event, fn),
   emit: (event, payload) => eventEmitter.emit(event, payload)
 }
-
-Object.freeze(Emitter);
-
+ 
 export default Emitter;

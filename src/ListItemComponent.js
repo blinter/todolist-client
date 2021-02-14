@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Emitter from './Emitter'
 import KeyUtils from './keyUtils'
 
+
 const _ = require('underscore')
 
 function ListItemComponent({ number, item }) {
@@ -16,8 +17,6 @@ function ListItemComponent({ number, item }) {
     const onDragLeave = (evt) => {
         evt.preventDefault()
         evt.stopPropagation()
-        console.log('onDragLeave')
-        //setTimeout(()=>{setShowDropZone(false)},1000)
     }
 
     const onDragEnd = (evt) => {
@@ -28,8 +27,6 @@ function ListItemComponent({ number, item }) {
     const onDragOver = (evt) => {
         evt.preventDefault()
         evt.stopPropagation()
-        console.log('onDragOver')
-        //setShowDropZone(true)
     }
 
     const onDragStart = (evt) => {
@@ -45,8 +42,8 @@ function ListItemComponent({ number, item }) {
     }
 
 
-    return (<div className={`mt-3 mb-3 container-fuid border`} draggable="true"
-        style={{ 'padding-left': `${number * 5}px` }} key={item.key}
+    return (<div className={`mt-3 mb-3 container-fuid border`} draggable={!item.root}
+        style={{ marginLeft: `${number * 10}px` }} key={item.key}
         onDragStart={onDragStart} onDragLeave={onDragLeave} onDragEnter={onDragEnter}
         onDragOver={onDragOver} onDragEnd={onDragEnd} >
 
@@ -54,7 +51,9 @@ function ListItemComponent({ number, item }) {
             <div className='col'>
                 <span className='d-block text-muted small'>{item.key}</span>
                 <div>
-                    <input value={item.description} placeholder='Descrição' />
+                    <input value={item.description} onChange={(evt) => {
+                        Emitter.emit('ITEM_DESCRIPTION_CHANGE', Object.assign({}, item, { description: evt.target.value }))
+                    }} placeholder='Descrição' />
                 </div>
             </div>
         </div>
@@ -64,6 +63,7 @@ function ListItemComponent({ number, item }) {
                 <ul className='list-group list-group-horizontal list-unstyled m-0'>
                     <li>
                         <button className='btn btn-sm' onClick={() => {
+                            console.log('ListItemComponent.onaddnewitem')
                             Emitter.emit('ADD_NEW_ITEM', {
                                 parent: item,
                                 newItem: {
@@ -76,21 +76,18 @@ function ListItemComponent({ number, item }) {
                             Adicionar item
                             </button>
                     </li>
-                    <li>
+                    {!item.root ? <li>
                         <button className='btn btn-sm' onClick={() => {
-                            Emitter.emit('REMOVE_ITEM', item);
+                            Emitter.emit('REMOVE_ITEM', item)
                         }}>Excluir</button>
-                    </li>
-                    <li>
-                        <button className='btn btn-sm btn-primary'>DrAG</button>
-                    </li>
+                    </li> : null}
                 </ul>
             </div>
         </div>
 
         <div className='row' hidden={!showDropZone}>
             <div className='col'>
-                <div className='bg-light mb-1 p-3' style={{ 'width': 200 }}
+                <div className='bg-light mb-1 p-1'
                     onDrop={(evt) => {
                         console.log('onDrop')
                         evt.preventDefault()
@@ -112,10 +109,7 @@ function ListItemComponent({ number, item }) {
         <div className='row'>
             <div className='col'>
                 {(item.itens ?? []).map((i) => {
-                    return <ListItemComponent number={number + 1} parent={this}
-                        // onRemoveItem={onRemoveItem}
-                        // onAddItem={onAddItem}
-                        item={i} />
+                    return <ListItemComponent number={number + 1} parent={this} item={i} />
                 })}
             </div>
         </div>
