@@ -1,36 +1,24 @@
-import 'bootstrap/dist/css/bootstrap.css';
-import { useEffect, useState } from 'react';
-import _ from 'underscore';
-import './App.css';
+import 'bootstrap/dist/css/bootstrap.css'
 import {
   BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
-} from "react-router-dom";
-import PaginaLista from './PaginaLista'
-import Emitter from './Emitter';
+  Route, Switch
+} from "react-router-dom"
+import './App.css'
+import PageHome from './pages/PageHome'
+import PageList2 from './pages/PageList2'
+import PageNewList from './pages/PageNewList'
 
 function App() {
 
   return (
-    <div className="mb-5">
-      <header>
-        <h1>TODOList APP</h1>
-      </header>
-      <div >
-        <Router>
-          <ul>
-            <li><Link to='cadastro' >Cadastrar</Link></li>
-          </ul>
-
-          <Switch>
-            <Route exact path="/lista/:key">
-              <PaginaLista emitter={Emitter} />
-            </Route>
-          </Switch>
-        </Router>
-      </div>
+    <div >
+      <Router>
+        <Switch>
+          <Route exact path="/list/key/:key" component={PageList2} />
+          <Route exact path="/list/new" component={PageNewList} />
+          <Route path="*" component={PageHome} />
+        </Switch>
+      </Router>
     </div>
   );
 }

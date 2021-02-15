@@ -1,30 +1,40 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router";
-
-import $ from 'jquery'
+import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.css';
+import $ from 'jquery';
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useParams } from "react-router";
 import _ from 'underscore';
-import './App.css';
-import ListItemComponent from './ListItemComponent'
-import Emitter from './Emitter';
+import ListItemComponent from '../components/ListItemComponent';
+import Emitter from '../Emitter';
 
-function PaginaLista() {
+
+function PageList() {
 
     let { key } = useParams()
 
-    const [rootItem, setRootItem] = useState({sa:'estou em outro escopo :)'})
 
+    const [rootItem, setRootItem] = useState({ sa: 'estou em outro escopo :)' })
+    const ref = useRef(rootItem);
+
+    const handler = () => {
+        console.log(rootItem)
+        console.log('bla bla bla')
+    }
+
+ 
     useEffect(() => {
 
-        Emitter.on('REMOVE_ITEM', removeItem)
-        Emitter.on('ADD_NEW_ITEM', addNewitem)
-        Emitter.on('ITEM_DESCRIPTION_CHANGE', itemDescriptionChange)
+        Emitter.addListener('REMOVE_ITEM', removeItem)
+        Emitter.addListener('ADD_NEW_ITEM', handler)
+        Emitter.addListener('ITEM_DESCRIPTION_CHANGE', itemDescriptionChange)
 
-        fetch(`http://localhost:4500/list/${key}`)
-            .then(results => results.json())
-            .then(data => {
-                setRootItem(data)
+        axios.get(`http://localhost:4500/list/key/${key}`)
+            .then(res => {
+                ref.current = res.data;
+                setRootItem(res.data)
             });
+
+        return () => Emitter.removeAllListeners('change')
 
     }, [])
 
@@ -107,4 +117,4 @@ function PaginaLista() {
     )
 }
 
-export default PaginaLista
+export default PageList
