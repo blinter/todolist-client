@@ -5,8 +5,7 @@ import {
 } from "react-router-dom"
 import './App.css'
 import PageHome from './pages/PageHome'
-import PageList2 from './pages/PageList2'
-import PageNewList from './pages/PageNewList'
+import PageList from './pages/PageList'
 
 function App() {
 
@@ -14,8 +13,8 @@ function App() {
     <div >
       <Router>
         <Switch>
-          <Route exact path="/list/key/:key" component={PageList2} />
-          <Route exact path="/list/new" component={PageNewList} />
+          <Route exact path="/list/key/:key" component={PageList} />
+          <Route exact path="/list/key/" component={PageList} />
           <Route path="*" component={PageHome} />
         </Switch>
       </Router>
@@ -23,4 +22,4 @@ function App() {
   );
 }
 
-export default App;
+export default App

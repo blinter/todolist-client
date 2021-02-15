@@ -42,16 +42,15 @@ function ListItemComponent({ number, item }) {
     }
 
 
-    return (<div className={`mt-3 mb-3 container border`} draggable={!item.root}
-        style={{ marginLeft: `${number * 10}px` }} key={item.key}
+    return (<div className={`mt-3 mb-3 container border rounded`} draggable={!item.root}
+        style={{ paddingLeft: `${number * 10}px` }} key={item.key}
         onDragStart={onDragStart} onDragLeave={onDragLeave} onDragEnter={onDragEnter}
         onDragOver={onDragOver} onDragEnd={onDragEnd} >
 
         <div className='row no-gutters'>
             <div className='col'>
                 <span className='d-block text-muted small'>{item.key}</span>
-                <div className='form-group'>
-                    <label>Descrição</label>
+                <div className='form-group pt-2'>
                     <input className='form-control' value={item.description} onChange={(evt) => {
                         Emitter.emit('ITEM_DESCRIPTION_CHANGE', Object.assign({}, item, { description: evt.target.value }))
                     }} placeholder='Descrição' />
